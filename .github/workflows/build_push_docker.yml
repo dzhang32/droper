@@ -1,0 +1,35 @@
+# this is inspired from https://github.com/combiz/scFlow/blob/master/.github/workflows/r_package.yaml
+# and relies on https://github.com/docker/build-push-action
+# secrets were setup with the help of
+# https://docs.docker.com/ci-cd/github-actions/ 
+# https://docs.docker.com/docker-hub/access-tokens/
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-push-docker:
+    runs-on: ubuntu-latest
+    steps:
+      # needed for "emulation support" - https://github.com/marketplace/actions/build-and-push-docker-images
+      # -
+      #   name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: dzhang32/droper:devel
