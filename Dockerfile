@@ -10,7 +10,14 @@ RUN curl -L -O \
 
 ENV PATH="${HOME}/mambaforge/bin:${PATH}"
 
-# install DROP
+# install DROP and execute dry run on drop_demo
 # -y agrees to install prompts
 # TODO - install into seperate conda env
 RUN mamba install -y -c conda-forge -c bioconda drop
+    && mkdir ~/drop_demo
+    && cd ~/drop_demo
+    && drop demo
+    && snakemake --cores 1 -n
+
+
+
